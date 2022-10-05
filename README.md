@@ -1,3 +1,3 @@
-# django-blog-app
+# Django-Blog-SuperNova
 
 ###### WIP
