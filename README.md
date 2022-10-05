@@ -1,0 +1,3 @@
+# django-blog-app
+
+###### WIP
