@@ -1,0 +1,82 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="card mb-3 border-0 bg-dark text-white" style="width: auto;">
+      <div class="card-body p-2">
+        <div class="card-header border-0">
+          <div class="row">
+            <div class="col-1 pe-0 me-10-px article-image-div">
+              <img class="rounded-circle article-img" src=" {{ object.author.profile.image.url }}" alt="">
+            </div>
+            <div class="col ps-0 ms-10-px">
+              <div class="row">
+                <div class="col">
+                  <h6 class="card-subtitle text-muted pt-2"><a class="mr-2 text-decoration-none" href="{% url 'profile' object.author.username %}">{{ object.author }}</a> <br> {{ object.date_posted|date:'F d, Y' }}</h6>
+                </div>
+                <div class="col-4 post-delete-btn">
+                  {% if object.author == user %}
+                    <a class="btn btn-primary me-1" href="{% url 'post-update' object.id %}">Update</a>
+                    <a class="btn btn-danger" href="{% url 'post-delete' object.id %}">Delete</a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="article-body p-3 pt-0">
+          <h4 class="card-title display-5">{{ object.title }}</h4>
+          <p class="card-text">{{ object.content }}</p>
+        </div>
+      </div>
+    </div>
+
+    <h4 class="text-white">Comments</h4>
+
+    <!-- New Comment Form -->
+    {% if user.is_authenticated %}
+        <div class="content-section mb-3">
+          <div class="card bg-dark text-white">
+            <div class="card-body">
+              <form method="post">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                  {{ form|crispy }}
+                </fieldset>
+                <div class="form-group">
+                  <button class="btn btn-primary" type="submit">Comment</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+    {% else %}
+        <p class="text-white"><a href="{% url 'login' %}?next=/post/{{ object.pk }}/">Login</a> to Comment</p>
+    {% endif %}
+
+    <!-- Comments -->
+    {% for comment in object.comment_set.all %}
+
+        <div class="card mb-3 border-0 bg-dark text-white" style="width: auto;">
+          <div class="card-body p-2">
+            <div class="card-header border-0">
+              <div class="row">
+                <div class="col-1 pe-0 me-10-px article-image-div">
+                  <img class="rounded-circle article-img" src=" {{ comment.author.profile.image.url }}" alt="">
+                </div>
+                <div class="col ps-0 ms-10-px">
+                  <div class="row">
+                    <div class="col">
+                      <h6 class="card-subtitle text-muted pt-2"><a class="mr-2 text-decoration-none" href="{% url 'profile' comment.author %}">{{ comment.author }}</a> <br> {{ comment.date_posted|date:'F d, Y' }}</h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="article-body p-3 pt-0">
+              <p class="card-text">{{ comment.comment }}</p>
+            </div>
+          </div>
+        </div>
+
+    {% endfor %}
+{% endblock content %}
